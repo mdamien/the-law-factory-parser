@@ -81,7 +81,10 @@ for step in procedure['steps']:
             print >> sys.stderr, a
         if a["sort"] == u"Rectifié":
             continue
-        key = format_sujet(a['sujet'])
+        try:
+            key = format_sujet(a['sujet'])
+        except:
+            continue
         if key not in sujets:
             orders.append(key)
             sujets[key] = {

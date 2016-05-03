@@ -81,13 +81,15 @@ elif re.search(r"assemblee-?nationale", url, re.I):
     texte["id"] += str(numero)
 else:
     m = re.search(r"(ta|l)?s?(\d\d)-(\d{1,3})\d?\.", url, re.I)
+    if m is None:
+        m = re.search(r"/(-)?20(\d+)-\d+/(\d+).html", url, re.I)
     numero = int(m.group(3))
     texte["id"] = ORDER+"S" + m.group(2) + "-"
     if m.group(1) is not None:
         texte["id"] += m.group(1)
     texte["id"] += "%03d" % numero
 
-texte["titre"] = re_clean_title_legif.sub('', soup.title.string.strip())
+texte["titre"] = re_clean_title_legif.sub('', soup.title.string.strip()) if soup.title else ""
 texte["expose"] = ""
 
 # Convert from roman numbers
@@ -167,7 +169,8 @@ html_replace = [
     (re.compile(r'^((<[^>]*>)*")%s ' % section_titles, re.I), lower_inner_title),
     (re.compile(r' pr..?liminaire', re.I), ' préliminaire'),
     (re.compile(r'<strike>[^<]*</strike>', re.I), ''),
-    (re_clean_spaces, " "),
+    (re.compile(r'^<a>(\w)', re.I), r"\1"),
+    (re_clean_spaces, " ")
 ]
 
 
