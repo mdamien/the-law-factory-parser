@@ -379,7 +379,7 @@ def complete(current, previous, step, previous_step_metas, table_concordance=Non
                     pieces = re_clean_et.sub(',', part[0])
                     log("EXTRACT non-modifiés for " + line['titre'] + ": " + pieces)
                     piece = []
-                    fail = True
+                    failed = False
                     for todo in pieces.split(','):
                         # Extract series of non-modified subsections of articles from previous version.
                         if " à " in todo:
@@ -389,7 +389,7 @@ def complete(current, previous, step, previous_step_metas, table_concordance=Non
                             if mark is False and gdoldstep:
                                 mark = get_mark_from_last(gdoldstep[line['titre']], start, end, sep=part[1:], enable_copyall=enable_copyall)
                             if mark is False:
-                                fail = True
+                                failed = True
                                 break
                             enable_copyall = False
                             piece.extend(mark)
@@ -399,12 +399,12 @@ def complete(current, previous, step, previous_step_metas, table_concordance=Non
                             if mark is False and gdoldstep:
                                 mark = get_mark_from_last(gdoldstep[line['titre']], todo, sep=part[1:], enable_copyall=enable_copyall)
                             if mark is False:
-                                fail = True
+                                failed = True
                                 break
                             enable_copyall = False
                             piece.extend(mark)
-                    if fail:
-                        log("WARNING: EXTRACT non-modifiés for " + line['titre'] + ": failed on " + todo)
+                    if failed:
+                        log("ERROR: EXTRACT non-modifiés for " + line['titre'] + ": failed on " + todo)
                         gd_text.append(text)
                     else:
                         gd_text.extend(piece)
